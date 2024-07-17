@@ -7,4 +7,5 @@
 package Model;
 
 public class Person {
+    String name;
 }
