@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="99005f2a-359f-4ab1-b413-9187ba8b5a2c" name="Changes" comment="I made a Main class and I also added a people class">
+    <list default="true" id="99005f2a-359f-4ab1-b413-9187ba8b5a2c" name="Changes" comment="This is just a test">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -85,8 +85,7 @@
       <option name="presentableId" value="Default" />
       <updated>1721062428946</updated>
       <workItem from="1721062430022" duration="1578000" />
-      <workItem from="1721064025950" duration="8497000" />
-      <workItem from="1721148951939" duration="2236000" />
+      <workItem from="1721064025950" duration="638000" />
     </task>
     <task id="LOCAL-00001" summary="This is just a test">
       <option name="closed" value="true" />
@@ -112,23 +111,7 @@
       <option name="project" value="LOCAL" />
       <updated>1721064284635</updated>
     </task>
-    <task id="LOCAL-00004" summary="I made a Main class and I also added a people class">
-      <option name="closed" value="true" />
-      <created>1721064731978</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1721064731978</updated>
-    </task>
-    <task id="LOCAL-00005" summary="I made a Main class and I also added a people class">
-      <option name="closed" value="true" />
-      <created>1721065528419</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1721065528419</updated>
-    </task>
-    <option name="localTasksCounter" value="6" />
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -136,7 +119,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="This is just a test" />
-    <MESSAGE value="I made a Main class and I also added a people class" />
-    <option name="LAST_COMMIT_MESSAGE" value="I made a Main class and I also added a people class" />
+    <option name="LAST_COMMIT_MESSAGE" value="This is just a test" />
   </component>
 </project>
