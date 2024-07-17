@@ -25,6 +25,8 @@ public class PersonController {
             this.hireYear = hireYear;
         }
 
+
+
         public void update() {
             Scanner scanner = new Scanner(System.in);
             while (true) {
