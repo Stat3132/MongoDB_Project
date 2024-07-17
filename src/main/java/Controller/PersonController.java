@@ -8,12 +8,12 @@ import java.nio.file.*;
 import java.util.*;
 
 public class PersonController {
-    private static final String PEOPLE_DATA = Paths.get("Long").toString();
+    private static final String PEOPLE_DATA = Paths.get("src/main/java/long").toString();
     private static final String PEOPLE_SERIALIZED = Paths.get("long serialized").toString();
     private static List<String> peopleList;
     private static int currentId = 0;
-    private static Map<Integer, Model.Person> readPersonDict = new HashMap<>();
-    private static Map<String, List<Model.Person>> lastName = new HashMap<>();
+    private static Map<Integer, Person> readPersonDict = new HashMap<>();
+    private static Map<String, List<Person>> lastName = new HashMap<>();
 
     public void startUp() throws IOException, ClassNotFoundException {
         try {
@@ -77,10 +77,10 @@ public class PersonController {
                 readPersonDict.put(currentId, newPerson);
                 if (lastName.containsKey(newLName)) {
                     if (lastName.get(newLName) != null) {
-                        ((List<Person>) lastName.get(newLName)).add(newPerson);
+                        ((List<Person>)lastName.get(newLName)).add(newPerson);
                     } else {
                         List<Person> tempList = new ArrayList<>();
-                        // REDUNDENT? ---> tempList.add(lastName.get(newLName));
+                        tempList.add(lastName.get(newLName).get(currentId));
                         tempList.add(newPerson);
                         lastName.put(newLName, tempList);
                     }
