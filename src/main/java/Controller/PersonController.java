@@ -8,7 +8,7 @@ import java.nio.file.*;
 import java.util.*;
 
 public class PersonController {
-    private static final String PEOPLE_DATA = Paths.get("long").toString();
+    private static final String PEOPLE_DATA = Paths.get("Long").toString();
     private static final String PEOPLE_SERIALIZED = Paths.get("long serialized").toString();
     private static List<String> peopleList;
     private static int currentId = 0;
@@ -16,12 +16,16 @@ public class PersonController {
     private static Map<String, List<Model.Person>> lastName = new HashMap<>();
 
     public void startUp() throws IOException, ClassNotFoundException {
-        List<String> peopleList = Files.list(Paths.get(PEOPLE_DATA))
-                .filter(Files::isRegularFile)
-                .map(Path::getFileName)
-                .map(String::valueOf)
-                .sorted(Comparator.comparingInt(s -> Integer.parseInt(s.split("\\.")[0])))
-                .toList();
+        try {
+            peopleList = Files.list(Paths.get(PEOPLE_DATA))
+                    .filter(Files::isRegularFile)
+                    .map(Path::getFileName)
+                    .map(String::valueOf)
+                    .sorted(Comparator.comparingInt(s -> Integer.parseInt(s.split("\\.")[0])))
+                    .toList();
+        } catch (IOException e){
+            System.out.println("No files found");
+        }
 
         if (Files.exists(Paths.get(PEOPLE_SERIALIZED))) {
             Files.walk(Paths.get(PEOPLE_SERIALIZED))

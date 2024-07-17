@@ -4,12 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="99005f2a-359f-4ab1-b413-9187ba8b5a2c" name="Changes" comment="This is just a test">
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_7_17_2024_10_31_AM__Changes_.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_7_17_2024_10_31_AM__Changes_.xml" afterDir="false" />
+    <list default="true" id="99005f2a-359f-4ab1-b413-9187ba8b5a2c" name="Changes" comment="AGENDA:&#10;&#10;1. The person class is implemented and it works with the person controller&#10;&#10;2. Changed all PersonController methods so that they use the Console UTIL class rather then scanners.&#10;&#10;3. Fully implemented all methods from our Python project.">
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MongoDB_Project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/MongoDB_Project.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MongoDB_Project.iml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Controller/PersonController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Controller/PersonController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Model/Person.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Model/Person.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,6 +67,7 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Neumont/Year 1/Q4/Work/OpenSource/Projects/MongoDB_Project/pom.xml",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -74,6 +79,25 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Neumont\Year 1\Q4\Work\OpenSource\Projects\MongoDB_Project" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="MongoDB_Project" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -117,7 +141,15 @@
       <option name="project" value="LOCAL" />
       <updated>1721064284635</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="AGENDA:&#10;&#10;1. The person class is implemented and it works with the person controller&#10;&#10;2. Changed all PersonController methods so that they use the Console UTIL class rather then scanners.&#10;&#10;3. Fully implemented all methods from our Python project.">
+      <option name="closed" value="true" />
+      <created>1721237898672</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1721237898672</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -125,6 +157,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="This is just a test" />
-    <option name="LAST_COMMIT_MESSAGE" value="This is just a test" />
+    <MESSAGE value="AGENDA:&#10;&#10;1. The person class is implemented and it works with the person controller&#10;&#10;2. Changed all PersonController methods so that they use the Console UTIL class rather then scanners.&#10;&#10;3. Fully implemented all methods from our Python project." />
+    <option name="LAST_COMMIT_MESSAGE" value="AGENDA:&#10;&#10;1. The person class is implemented and it works with the person controller&#10;&#10;2. Changed all PersonController methods so that they use the Console UTIL class rather then scanners.&#10;&#10;3. Fully implemented all methods from our Python project." />
   </component>
 </project>
