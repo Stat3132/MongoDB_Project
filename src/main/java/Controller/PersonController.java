@@ -72,7 +72,8 @@ public class PersonController {
     private static void peopleListRead() throws IOException, ClassNotFoundException {
         long startTime = System.nanoTime();
         for (String people : peopleList) {
-            try (BufferedReader br = new BufferedReader(new FileReader(PEOPLE_DATA + "/" + people))) {
+            Path filePath = Paths.get(PEOPLE_DATA + "/" + people);
+            try (BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
                 String peopleRead = br.readLine();
                 String[] personStrip = peopleRead.split(",");
                 int ID = Integer.parseInt(personStrip[0].strip());
@@ -82,21 +83,27 @@ public class PersonController {
                 Person newPerson = new Person(ID, newFName, newLName, newHireYear);
                 readPersonDict.put(currentId, newPerson);
                 if (lastName.containsKey(newLName)) {
-                    if (lastName.get(newLName) != null) {
-                        ((List<Person>)lastName.get(newLName)).add(newPerson);
+                    if (lastName.get(newLName).getClass() == ArrayList.class) {
+                        lastName.get(newLName).add(newPerson);
                     } else {
-                        List<Person> tempList = new ArrayList<>();
-                        tempList.add(lastName.get(newLName).get(currentId));
-                        tempList.add(newPerson);
-                        lastName.put(newLName, tempList);
+                        List<Person> newLastName = new ArrayList<>();
+                        newLastName.add(newPerson);
+                        lastName.put(newLName, newLastName);
+
                     }
                 } else {
                     lastName.put(newLName, Collections.singletonList(newPerson));
                 }
                 currentId = ID;
-                try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(PEOPLE_SERIALIZED + "/" + ID + ".ppkl"))) {
-                    oos.writeObject(newPerson);
-                }
+//                try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(PEOPLE_SERIALIZED + "/" + ID + ".ppkl"))) {
+//                    oos.writeObject(newPerson);
+//                    oos.close();
+//
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
         long endTime = System.nanoTime();
