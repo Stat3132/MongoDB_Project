@@ -2,10 +2,12 @@ package Controller;
 
 import UTIL.Console;
 import Model.Person;
+import View.ViewPerson;
 
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.List;
 
 public class PersonController {
     private static final String PEOPLE_DATA = Paths.get("src/main/java/long").toString();
@@ -14,6 +16,7 @@ public class PersonController {
     private static int currentId = 0;
     private static Map<Integer, Person> readPersonDict = new HashMap<>();
     private static Map<String, List<Person>> lastName = new HashMap<>();
+    ViewPerson menu = new ViewPerson();
 
     public void startUp() throws IOException, ClassNotFoundException {
         try {
@@ -37,28 +40,31 @@ public class PersonController {
 
         peopleListRead();
         while (true) {
-            int userSelectionChoice = Console.getUserInt(" 1. Add a Person\n" +
-                    " 2. Delete a Person\n" +
-                    " 3. Update a person\n" +
-                    " 4. View a Person\n" +
-                    " 5. View a Person with Serialization\n" +
-                    " 6. View All People\n" +
-                    " 7. Exit\n", true);
-
-            if (userSelectionChoice == 1) {
-                addPeople();
-            } else if (userSelectionChoice == 2) {
-                deletePeople();
-            } else if (userSelectionChoice == 3) {
-                updatePeople();
-            } else if (userSelectionChoice == 4) {
-                viewPeople();
-            } else if (userSelectionChoice == 5) {
-                //viewPeopleWithSerializedData();
-            } else if (userSelectionChoice == 6) {
-                viewAllPeople();
-            } else if (userSelectionChoice == 7) {
-                break;
+            switch (menu.startUp()){
+                case 1:
+                    //add
+                    addPeople();
+                    break;
+                case 2:
+                    //delete
+                    deletePeople();
+                    break;
+                case 3:
+                    //update
+                    updatePeople();
+                    break;
+                case 4:
+                    //view a person
+                    viewPerson();
+                    break;
+                case 5:
+                    //view all
+                    viewAllPeople();
+                    break;
+                default:
+                    //exit
+                    menu.goodbye();
+                    break;
             }
         }
     }
@@ -205,7 +211,7 @@ public class PersonController {
         }
     }
 
-    private static void viewPeople() throws IOException, ClassNotFoundException {
+    private static void viewPerson() throws IOException, ClassNotFoundException {
         long startTime = System.nanoTime();
         String userSelectedInfo = Console.getUserStr("Enter user ID or last name to view contents: ",true);
         for (Person person : readPersonDict.values()) {
@@ -235,37 +241,7 @@ public class PersonController {
         System.out.println(String.format("Run Time of Viewing All People: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
 
-    //region UNUSED
-//    private static void viewPeopleWithSerializedData() throws IOException, ClassNotFoundException {
-//        long startTime = System.nanoTime();
-//        Map<Integer, Person> deSerialized = new HashMap<>();
-//        for (Person person : readPersonDict.values()) {
-//            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(PEOPLE_SERIALIZED + "/" + person.getID() + ".ppkl"))) {
-//                deSerialized.put(person.getID(), (Person) ois.readObject());
-//            }
-//        }
-//        System.out.print("Enter user ID or last name to view contents: ");
-//        String userSelectedInfo = new Scanner(System.in).nextLine();
-//        for (Person person : deSerialized.values()) {
-//            if (userSelectedInfo.matches("\\d+")) {
-//                if (Integer.parseInt(userSelectedInfo) == person.getID()) {
-//                    System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
-//                    break;
-//                }
-//            } else {
-//                if (lastName.containsKey(userSelectedInfo.toUpperCase())) {
-//                    for (Person p : lastName.get(userSelectedInfo.toUpperCase())) {
-//                        System.out.println(p.getID() + " " + p.getFirstName() + " " + p.getLastName() + " " + p.getHireYear());
-//                    }
-//                    break;
-//                }
-//            }
-//        }
-//        long endTime = System.nanoTime();
-//        System.out.println(String.format("Run Time of Viewing a Person with Serialization: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
-//    }
-//
-//
-    //endregion
+
+
 
 }
