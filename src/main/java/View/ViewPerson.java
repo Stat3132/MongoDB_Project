@@ -29,6 +29,16 @@ public class ViewPerson {
         System.out.println(Console.getStringWithColor("All people imported to mongo", Console.TextColor.RED));
     }
 
+    public void personAddedToMongo(){
+        System.out.println(Console.getStringWithColor("Person added to mongo", Console.TextColor.RED));
+    }
+    public void personRemovedFromMongo(){
+        System.out.println(Console.getStringWithColor("Person removed from mongo", Console.TextColor.RED));
+    }
+    public void personUpdatedIntoMongo(){
+        System.out.println(Console.getStringWithColor("Person updated in mongo", Console.TextColor.RED));
+    }
+
 
 
 

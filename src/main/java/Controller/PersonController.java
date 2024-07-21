@@ -4,6 +4,7 @@ import UTIL.Console;
 import Model.Person;
 import View.ViewPerson;
 
+import javax.naming.ldap.Control;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -21,7 +22,7 @@ public class PersonController {
 
     static MongoController mongoControl = new MongoController();
 
-    ViewPerson menu = new ViewPerson();
+    static ViewPerson menu = new ViewPerson();
 
     //region startUp
     public void startUp() throws IOException, ClassNotFoundException {
@@ -156,6 +157,7 @@ public class PersonController {
             }
             Person newPersonObj = new Person(currentId, firstName, lastName, hireYear);
             mongoControl.addEmployeeToDataBase(newPersonObj);
+            menu.personAddedToMongo();
             readPersonDict.put(currentId, newPersonObj);
             System.out.println(currentId + " " + firstName + " " + lastName + " " + hireYear);
             String writtenPerson = currentId + ", " + firstName + ", " + lastName + ", " + hireYear;
@@ -179,6 +181,7 @@ public class PersonController {
                 System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
                 readPersonDict.remove(person.getID());
                 mongoControl.deleteEmployeeFromDatabase(person);
+                menu.personRemovedFromMongo();
                 Files.deleteIfExists(Paths.get(PEOPLE_DATA + "/" + userSelectedID + ".txt"));
                 System.out.println("File has been deleted");
                 break;
@@ -244,6 +247,7 @@ public class PersonController {
             }
             Person updatedPerson = new Person(person.getID(), person.getFirstName(), person.getLastName(), person.getHireYear());
             mongoControl.updateRecord(updatedPerson);
+            menu.personUpdatedIntoMongo();
             String writtenPerson = person.getID() + ", " + person.getFirstName() + ", " + person.getLastName() + ", " + person.getHireYear();
             try (PrintWriter pw = new PrintWriter(new FileWriter(PEOPLE_DATA + "/" + ID + ".txt"))) {
                 pw.println(writtenPerson);
@@ -278,6 +282,8 @@ public class PersonController {
         System.out.println(String.format("Run Time of Viewing a Person: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
     //endregion
+
+    //region view all people
     private static void viewAllPeople() throws IOException, ClassNotFoundException {
         long startTime = System.nanoTime();
         for (Person person : readPersonDict.values()) {
@@ -287,6 +293,7 @@ public class PersonController {
         long endTime = System.nanoTime();
         System.out.println(String.format("Run Time of Viewing All People: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
+    //endregion
 
 
 
