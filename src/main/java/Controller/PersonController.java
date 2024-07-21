@@ -16,8 +16,14 @@ public class PersonController {
     private static int currentId = 0;
     private static Map<Integer, Person> readPersonDict = new HashMap<>();
     private static Map<String, List<Person>> lastName = new HashMap<>();
+
+    //MONGO COMMANDS:
+
+    static MongoController mongoControl = new MongoController();
+
     ViewPerson menu = new ViewPerson();
 
+    //region startUp
     public void startUp() throws IOException, ClassNotFoundException {
         try {
             peopleList = Files.list(Paths.get(PEOPLE_DATA))
@@ -26,6 +32,7 @@ public class PersonController {
                     .map(String::valueOf)
                     .sorted(Comparator.comparingInt(s -> Integer.parseInt(s.split("\\.")[0])))
                     .toList();
+
         } catch (IOException e){
             System.out.println("No files found");
         }
@@ -38,7 +45,19 @@ public class PersonController {
         }
         Files.createDirectories(Paths.get(PEOPLE_SERIALIZED));
 
+
         peopleListRead();
+        //MONGO COMMANDS:
+
+        mongoControl.mongoControl();
+        for (Person person : readPersonDict.values()) {
+            if (mongoControl.collection.countDocuments() != readPersonDict.size()) {
+                mongoControl.addEmployeeToDataBase(person);
+            } else {
+                break;
+            }
+        }
+        menu.allPeopleMovedToMongo();
         while (true) {
             switch (menu.startUp()){
                 case 1:
@@ -64,11 +83,13 @@ public class PersonController {
                 default:
                     //exit
                     menu.goodbye();
-                    break;
+                    return;
             }
         }
     }
+    //endregion
 
+    //region read people
     private static void peopleListRead() throws IOException, ClassNotFoundException {
         long startTime = System.nanoTime();
         for (String people : peopleList) {
@@ -109,7 +130,9 @@ public class PersonController {
         long endTime = System.nanoTime();
         System.out.println(String.format("Run Time of Reading the List: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
+    //endregion
 
+    //region add
     private static void addPeople() throws IOException {
         currentId++;
         long startTime = System.nanoTime();
@@ -132,6 +155,7 @@ public class PersonController {
                 continue;
             }
             Person newPersonObj = new Person(currentId, firstName, lastName, hireYear);
+            mongoControl.addEmployeeToDataBase(newPersonObj);
             readPersonDict.put(currentId, newPersonObj);
             System.out.println(currentId + " " + firstName + " " + lastName + " " + hireYear);
             String writtenPerson = currentId + ", " + firstName + ", " + lastName + ", " + hireYear;
@@ -144,7 +168,9 @@ public class PersonController {
         long endTime = System.nanoTime();
         System.out.println(String.format("Run Time of Adding a New Person: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
+    //endregion
 
+    //region Delete
     private static void deletePeople() throws IOException {
         long startTime = System.nanoTime();
         int userSelectedID = Console.getUserInt("Enter user ID to delete: ", true);
@@ -152,6 +178,7 @@ public class PersonController {
             if (userSelectedID == person.getID()) {
                 System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
                 readPersonDict.remove(person.getID());
+                mongoControl.deleteEmployeeFromDatabase(person);
                 Files.deleteIfExists(Paths.get(PEOPLE_DATA + "/" + userSelectedID + ".txt"));
                 System.out.println("File has been deleted");
                 break;
@@ -160,9 +187,12 @@ public class PersonController {
         long endTime = System.nanoTime();
         System.out.println(String.format("Run Time of Deleting a Person: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
+    //endregion
+
+    //region update person
     private static void updatePeople() throws IOException, ClassNotFoundException {
         long startTime = System.nanoTime();
-        int userSelectedID = Console.getUserInt("Enter user ID to delete: ", true);
+        int userSelectedID = Console.getUserInt("Enter user ID to alter employee: ", true);
         for (Person person : readPersonDict.values()) {
             if (userSelectedID == person.getID()) {
                 System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
@@ -176,7 +206,9 @@ public class PersonController {
         long endTime = System.nanoTime();
         System.out.println(String.format("Run Time of UPDATING: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
+    //endregion
 
+    //region update logic
     private static void update(Person person, int ID) throws IOException {
         while (true) {
             System.out.println(" 1. Change Firstname\n" +
@@ -210,6 +242,8 @@ public class PersonController {
                     person.setHireYear(newHireYear);
                 }
             }
+            Person updatedPerson = new Person(person.getID(), person.getFirstName(), person.getLastName(), person.getHireYear());
+            mongoControl.updateRecord(updatedPerson);
             String writtenPerson = person.getID() + ", " + person.getFirstName() + ", " + person.getLastName() + ", " + person.getHireYear();
             try (PrintWriter pw = new PrintWriter(new FileWriter(PEOPLE_DATA + "/" + ID + ".txt"))) {
                 pw.println(writtenPerson);
@@ -217,7 +251,9 @@ public class PersonController {
             break;
         }
     }
+    //endregion
 
+    //region view person
     private static void viewPerson() throws IOException, ClassNotFoundException {
         long startTime = System.nanoTime();
         String userSelectedInfo = Console.getUserStr("Enter user ID or last name to view contents: ",true);
@@ -225,12 +261,14 @@ public class PersonController {
             if (userSelectedInfo.matches("\\d+")) {
                 if (Integer.parseInt(userSelectedInfo) == person.getID()) {
                     System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
+                    mongoControl.viewEmployee(person);
                     break;
                 }
             } else {
                 if (lastName.containsKey(userSelectedInfo.toUpperCase())) {
                     for (Person p : lastName.get(userSelectedInfo.toUpperCase())) {
                         System.out.println(p.getID() + " " + p.getFirstName() + " " + p.getLastName() + " " + p.getHireYear());
+                        mongoControl.viewEmployee(person);
                     }
                     break;
                 }
@@ -239,10 +277,12 @@ public class PersonController {
         long endTime = System.nanoTime();
         System.out.println(String.format("Run Time of Viewing a Person: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
+    //endregion
     private static void viewAllPeople() throws IOException, ClassNotFoundException {
         long startTime = System.nanoTime();
         for (Person person : readPersonDict.values()) {
             System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
+            mongoControl.viewEmployee(person);
         }
         long endTime = System.nanoTime();
         System.out.println(String.format("Run Time of Viewing All People: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));

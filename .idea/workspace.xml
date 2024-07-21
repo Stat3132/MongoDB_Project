@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="99005f2a-359f-4ab1-b413-9187ba8b5a2c" name="Changes" comment="AGENDA:&#10;&#10;1. The person class is implemented and it works with the person controller&#10;&#10;2. Changed all PersonController methods so that they use the Console UTIL class rather then scanners.&#10;&#10;3. Fully implemented all methods from our Python project.">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+    <list default="true" id="99005f2a-359f-4ab1-b413-9187ba8b5a2c" name="Changes" comment="Add RUNS, Added mongo controller and added dependencies to pom.xml file.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Controller/MongoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Controller/MongoController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Controller/PersonController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Controller/PersonController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/View/ViewPerson.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/View/ViewPerson.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -54,26 +56,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Application.Main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Neumont/Year 1/Q4/Work/Database-II/Projects/MongoDB_Project&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Application.Main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Neumont/Year 1/Q4/Work/Database-II/Projects/MongoDB_Project",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Neumont\Year 1\Q4\Work\OpenSource\Projects\MongoDB_Project" />
@@ -84,7 +86,7 @@
       <option name="ALTERNATIVE_JRE_PATH" value="18" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="Main" />
-      <module name="MongoDB_Project" />
+      <module name="foundation" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -114,7 +116,9 @@
       <workItem from="1721062430022" duration="1578000" />
       <workItem from="1721064025950" duration="638000" />
       <workItem from="1721239522410" duration="120000" />
-      <workItem from="1721239676429" duration="1252000" />
+      <workItem from="1721239676429" duration="1972000" />
+      <workItem from="1721250562928" duration="746000" />
+      <workItem from="1721578946789" duration="11082000" />
     </task>
     <task id="LOCAL-00001" summary="This is just a test">
       <option name="closed" value="true" />
@@ -148,7 +152,23 @@
       <option name="project" value="LOCAL" />
       <updated>1721237898672</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Need to debug the rest of the code because it is still not working properly with the integration to java.">
+      <option name="closed" value="true" />
+      <created>1721241042524</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1721241042524</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Add RUNS, Added mongo controller and added dependencies to pom.xml file.">
+      <option name="closed" value="true" />
+      <created>1721408893680</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1721408893680</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -157,15 +177,17 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="This is just a test" />
     <MESSAGE value="AGENDA:&#10;&#10;1. The person class is implemented and it works with the person controller&#10;&#10;2. Changed all PersonController methods so that they use the Console UTIL class rather then scanners.&#10;&#10;3. Fully implemented all methods from our Python project." />
-    <option name="LAST_COMMIT_MESSAGE" value="AGENDA:&#10;&#10;1. The person class is implemented and it works with the person controller&#10;&#10;2. Changed all PersonController methods so that they use the Console UTIL class rather then scanners.&#10;&#10;3. Fully implemented all methods from our Python project." />
+    <MESSAGE value="Need to debug the rest of the code because it is still not working properly with the integration to java." />
+    <MESSAGE value="Add RUNS, Added mongo controller and added dependencies to pom.xml file." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add RUNS, Added mongo controller and added dependencies to pom.xml file." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/Controller/PersonController.java</url>
-          <line>19</line>
-          <option name="timeStamp" value="2" />
+          <line>84</line>
+          <option name="timeStamp" value="19" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
