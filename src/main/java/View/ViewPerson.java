@@ -1,16 +1,14 @@
 package View;
 import UTIL.Console;
 
-import java.sql.SQLOutput;
-
 
 public class ViewPerson {
     //startup  create update add delete view
 
-    public int startUp(){
-        Console.write("Hello, Welcome to our Person Database", Console.TextColor.PURPLE);
+    public int startUpM(){
+        Console.write("Hello, Welcome to our Person Database \n", Console.TextColor.PURPLE);
         return Console.getIntInput("""
-                \n1. Add a Person
+                1. Add a Person
                 2. Delete a Person
                 3. Update a Person
                 4. View a Person
@@ -19,24 +17,48 @@ public class ViewPerson {
                 """, 1,6, Console.TextColor.PURPLE);
     }
 
-    public void goodbye(){
-        System.out.println("Thank you for visiting! Goodbye");
+    public void lengthWarning(){
+        Console.write("\n First Name not within character limit or is digit. Limit = 16", Console.TextColor.RED);
     }
+
+    public void yearWarning(){
+        Console.write("\n Invalid Year. Year must be between 1900 - 2023", Console.TextColor.RED);
+    }
+
+    public void updatePeopleWarning(){
+        Console.write("\n NO USER FOUND", Console.TextColor.RED);
+    }
+
+    public int updateM(){
+        Console.write("What Attribute would you like to Update \n", Console.TextColor.PURPLE);
+        return Console.getIntInput("""
+                1. Change First Name
+                2. Change Last Name
+                3. Change Hire Year
+                *Person ID CAN NOT be Updated*
+                """, 1,3, Console.TextColor.PURPLE);
+    }
+
+
+    public void goodbye(){
+        Console.write("Thank you for visiting! Goodbye", Console.TextColor.PURPLE);
+    }
+
+
 
     //MONGO VIEW
 
     public void allPeopleMovedToMongo(){
-        System.out.println(Console.getStringWithColor("All people imported to mongo", Console.TextColor.RED));
+        Console.write("All people imported to mongo \n", Console.TextColor.GREEN);
     }
-
     public void personAddedToMongo(){
-        System.out.println(Console.getStringWithColor("Person added to mongo", Console.TextColor.RED));
+        Console.write("Person added to mongo \n", Console.TextColor.GREEN);
     }
     public void personRemovedFromMongo(){
-        System.out.println(Console.getStringWithColor("Person removed from mongo", Console.TextColor.RED));
+        Console.write("Person removed from mongo \n", Console.TextColor.GREEN);;
     }
     public void personUpdatedIntoMongo(){
-        System.out.println(Console.getStringWithColor("Person updated in mongo", Console.TextColor.RED));
+        Console.write("Person updated in mongo \n", Console.TextColor.GREEN);;
     }
 
 

@@ -3,8 +3,6 @@ package Controller;
 import UTIL.Console;
 import Model.Person;
 import View.ViewPerson;
-
-import javax.naming.ldap.Control;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -12,10 +10,9 @@ import java.util.List;
 
 public class PersonController {
     private static final String PEOPLE_DATA = Paths.get("src/main/java/long").toString();
-    private static final String PEOPLE_SERIALIZED = Paths.get("long serialized").toString();
     private static List<String> peopleList;
     private static int currentId = 0;
-    private static Map<Integer, Person> readPersonDict = new HashMap<>();
+    private static Map<Integer, Person> readPersonHash = new HashMap<>();
     private static Map<String, List<Person>> lastName = new HashMap<>();
 
     //MONGO COMMANDS:
@@ -37,22 +34,12 @@ public class PersonController {
         } catch (IOException e){
             System.out.println("No files found");
         }
-
-        if (Files.exists(Paths.get(PEOPLE_SERIALIZED))) {
-            Files.walk(Paths.get(PEOPLE_SERIALIZED))
-                    .filter(Files::isRegularFile)
-                    .map(Path::toFile)
-                    .forEach(File::delete);
-        }
-        Files.createDirectories(Paths.get(PEOPLE_SERIALIZED));
-
-
         peopleListRead();
         //MONGO COMMANDS:
 
         mongoControl.mongoControl();
-        for (Person person : readPersonDict.values()) {
-            if (mongoControl.collection.countDocuments() != readPersonDict.size()) {
+        for (Person person : readPersonHash.values()) {
+            if (mongoControl.collection.countDocuments() != readPersonHash.size()) {
                 mongoControl.addEmployeeToDataBase(person);
             } else {
                 break;
@@ -60,7 +47,7 @@ public class PersonController {
         }
         menu.allPeopleMovedToMongo();
         while (true) {
-            switch (menu.startUp()){
+            switch (menu.startUpM()){
                 case 1:
                     //add
                     addPeople();
@@ -92,7 +79,6 @@ public class PersonController {
 
     //region read people
     private static void peopleListRead() throws IOException, ClassNotFoundException {
-        long startTime = System.nanoTime();
         for (String people : peopleList) {
             Path filePath = Paths.get(PEOPLE_DATA + "/" + people);
             try (BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
@@ -103,7 +89,7 @@ public class PersonController {
                 String newLName = personStrip[2].strip();
                 String newHireYear = personStrip[3].strip();
                 Person newPerson = new Person(ID, newFName, newLName, newHireYear);
-                readPersonDict.put(currentId, newPerson);
+                readPersonHash.put(currentId, newPerson);
                 if (lastName.containsKey(newLName)) {
                     if (lastName.get(newLName).getClass() == ArrayList.class) {
                         lastName.get(newLName).add(newPerson);
@@ -117,26 +103,16 @@ public class PersonController {
                     lastName.put(newLName, Collections.singletonList(newPerson));
                 }
                 currentId = ID;
-//                try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(PEOPLE_SERIALIZED + "/" + ID + ".ppkl"))) {
-//                    oos.writeObject(newPerson);
-//                    oos.close();
-//
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        long endTime = System.nanoTime();
-        System.out.println(String.format("Run Time of Reading the List: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
     //endregion
 
     //region add
     private static void addPeople() throws IOException {
         currentId++;
-        long startTime = System.nanoTime();
         while (true) {
             String newPerson = Console.getStringInput("Enter First Name, Last Name and Hire date separated by commas: ");
             String[] personInfo = newPerson.split(",");
@@ -144,21 +120,21 @@ public class PersonController {
             String lastName = personInfo[1].strip();
             String hireYear = personInfo[2].strip();
             if (!(2 <= firstName.length() && firstName.length() <= 16 && !firstName.matches("\\d+"))) {
-                System.out.println("First Name not within character limit or is digit. Limit = 16");
+                menu.lengthWarning();
                 continue;
             }
             if (!(2 <= lastName.length() && lastName.length() <= 16 && !lastName.matches("\\d+"))) {
-                System.out.println("Last Name not within character limit or is digit. Limit = 16");
+                menu.lengthWarning();
                 continue;
             }
             if (!(hireYear.matches("\\d{4}") && Integer.parseInt(hireYear) >= 1900 && Integer.parseInt(hireYear) <= 2023)) {
-                System.out.println("Invalid Year");
+                menu.yearWarning();
                 continue;
             }
             Person newPersonObj = new Person(currentId, firstName, lastName, hireYear);
             mongoControl.addEmployeeToDataBase(newPersonObj);
             menu.personAddedToMongo();
-            readPersonDict.put(currentId, newPersonObj);
+            readPersonHash.put(currentId, newPersonObj);
             System.out.println(currentId + " " + firstName + " " + lastName + " " + hireYear);
             String writtenPerson = currentId + ", " + firstName + ", " + lastName + ", " + hireYear;
             try (PrintWriter pw = new PrintWriter(new FileWriter(PEOPLE_DATA + "/" + currentId + ".txt"))) {
@@ -167,19 +143,16 @@ public class PersonController {
             currentId++;
             break;
         }
-        long endTime = System.nanoTime();
-        System.out.println(String.format("Run Time of Adding a New Person: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
     //endregion
 
     //region Delete
     private static void deletePeople() throws IOException {
-        long startTime = System.nanoTime();
         int userSelectedID = Console.getUserInt("Enter user ID to delete: ", true);
-        for (Person person : readPersonDict.values()) {
+        for (Person person : readPersonHash.values()) {
             if (userSelectedID == person.getID()) {
                 System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
-                readPersonDict.remove(person.getID());
+                readPersonHash.remove(person.getID());
                 mongoControl.deleteEmployeeFromDatabase(person);
                 menu.personRemovedFromMongo();
                 Files.deleteIfExists(Paths.get(PEOPLE_DATA + "/" + userSelectedID + ".txt"));
@@ -187,81 +160,73 @@ public class PersonController {
                 break;
             }
         }
-        long endTime = System.nanoTime();
-        System.out.println(String.format("Run Time of Deleting a Person: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
     //endregion
 
     //region update person
     private static void updatePeople() throws IOException, ClassNotFoundException {
-        long startTime = System.nanoTime();
         int userSelectedID = Console.getUserInt("Enter user ID to alter employee: ", true);
-        for (Person person : readPersonDict.values()) {
+        for (Person person : readPersonHash.values()) {
             if (userSelectedID == person.getID()) {
                 System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
                 update(person, userSelectedID);
                 break;
             }
-            if (userSelectedID > readPersonDict.size()) {
-                System.out.println("NO USER FOUND");
+            if (userSelectedID > readPersonHash.size()) {
+                menu.updatePeopleWarning();
             }
         }
-        long endTime = System.nanoTime();
-        System.out.println(String.format("Run Time of UPDATING: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
     //endregion
 
     //region update logic
     private static void update(Person person, int ID) throws IOException {
         while (true) {
-            System.out.println(" 1. Change Firstname\n" +
-                    " 2. Change Lastname\n" +
-                    " 3. Change Hire Year\n" +
-                    "*Person ID CAN NOT be Updated*");
-            System.out.print("Enter choice: ");
-            int choice = Console.getUserInt("Enter choice: ", true);
-            if (choice == 1) {
-                String userNewFirstName = Console.getUserStr("Enter new first name: ",true);
-                if (!(2 <= userNewFirstName.length() && userNewFirstName.length() <= 16 && !userNewFirstName.matches("\\d+"))) {
-                    System.out.println("First Name not within character limit or is digit. Limit = 16");
-                    continue;
-                } else {
-                    person.setFirstName(userNewFirstName);
+            switch(menu.updateM()) {
+                case 1:
+                    String userNewFirstName = Console.getUserStr("Enter new first name: ", true);
+                    if (!(2 <= userNewFirstName.length() && userNewFirstName.length() <= 16 && !userNewFirstName.matches("\\d+"))) {
+                        menu.lengthWarning();
+                        continue;
+                    } else {
+                        person.setFirstName(userNewFirstName);
+                    }
+                    break;
+                case 2:
+                    String userNewLastName = Console.getUserStr("Enter new last name: ", true);
+                    if (!(2 <= userNewLastName.length() && userNewLastName.length() <= 16 && !userNewLastName.matches("\\d+"))) {
+                        menu.lengthWarning();
+                        continue;
+                    } else {
+                        person.setLastName(userNewLastName);
+                    }
+                    break;
+                case 3:
+                    String newHireYear = Console.getUserStr("Enter new hire year: ", true);
+                    if (!(newHireYear.matches("\\d{4}") && Integer.parseInt(newHireYear) >= 1900 && Integer.parseInt(newHireYear) <= 2023)) {
+                        menu.yearWarning();
+                        continue;
+                    } else {
+                        person.setHireYear(newHireYear);
+                    }
                 }
-            } else if (choice == 2) {
-                String userNewLastName = Console.getUserStr("Enter new last name: ",true);
-                if (!(2 <= userNewLastName.length() && userNewLastName.length() <= 16 && !userNewLastName.matches("\\d+"))) {
-                    System.out.println("Last Name not within character limit or is digit. Limit = 16");
-                    continue;
-                } else {
-                    person.setLastName(userNewLastName);
-                }
-            } else if (choice == 3) {
-                String newHireYear = Console.getUserStr("Enter new hire year: ",true);
-                if (!(newHireYear.matches("\\d{4}") && Integer.parseInt(newHireYear) >= 1900 && Integer.parseInt(newHireYear) <= 2023)) {
-                    System.out.println("Invalid Year");
-                    continue;
-                } else {
-                    person.setHireYear(newHireYear);
-                }
-            }
+
             Person updatedPerson = new Person(person.getID(), person.getFirstName(), person.getLastName(), person.getHireYear());
             mongoControl.updateRecord(updatedPerson);
             menu.personUpdatedIntoMongo();
             String writtenPerson = person.getID() + ", " + person.getFirstName() + ", " + person.getLastName() + ", " + person.getHireYear();
             try (PrintWriter pw = new PrintWriter(new FileWriter(PEOPLE_DATA + "/" + ID + ".txt"))) {
                 pw.println(writtenPerson);
+
             }
-            break;
         }
     }
     //endregion
 
     //region view person
     private static void viewPerson() throws IOException, ClassNotFoundException {
-        long startTime = System.nanoTime();
         String userSelectedInfo = Console.getUserStr("Enter user ID or last name to view contents: ",true);
-        for (Person person : readPersonDict.values()) {
+        for (Person person : readPersonHash.values()) {
             if (userSelectedInfo.matches("\\d+")) {
                 if (Integer.parseInt(userSelectedInfo) == person.getID()) {
                     System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
@@ -278,20 +243,15 @@ public class PersonController {
                 }
             }
         }
-        long endTime = System.nanoTime();
-        System.out.println(String.format("Run Time of Viewing a Person: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
     //endregion
 
     //region view all people
     private static void viewAllPeople() throws IOException, ClassNotFoundException {
-        long startTime = System.nanoTime();
-        for (Person person : readPersonDict.values()) {
+        for (Person person : readPersonHash.values()) {
             System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
             mongoControl.viewEmployee(person);
         }
-        long endTime = System.nanoTime();
-        System.out.println(String.format("Run Time of Viewing All People: %.6f seconds", (endTime - startTime) / 1_000_000_000.0));
     }
     //endregion
 
