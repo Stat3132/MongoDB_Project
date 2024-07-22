@@ -10,7 +10,7 @@ public class ViewPerson {
     public int startUp(){
         Console.write("Hello, Welcome to our Person Database", Console.TextColor.PURPLE);
         return Console.getIntInput("""
-                1. Add a Person
+                \n1. Add a Person
                 2. Delete a Person
                 3. Update a Person
                 4. View a Person
@@ -21,6 +21,22 @@ public class ViewPerson {
 
     public void goodbye(){
         System.out.println("Thank you for visiting! Goodbye");
+    }
+
+    //MONGO VIEW
+
+    public void allPeopleMovedToMongo(){
+        System.out.println(Console.getStringWithColor("All people imported to mongo", Console.TextColor.RED));
+    }
+
+    public void personAddedToMongo(){
+        System.out.println(Console.getStringWithColor("Person added to mongo", Console.TextColor.RED));
+    }
+    public void personRemovedFromMongo(){
+        System.out.println(Console.getStringWithColor("Person removed from mongo", Console.TextColor.RED));
+    }
+    public void personUpdatedIntoMongo(){
+        System.out.println(Console.getStringWithColor("Person updated in mongo", Console.TextColor.RED));
     }
 
 
