@@ -36,8 +36,6 @@ public class PersonController {
         }
         peopleListRead();
         //MONGO COMMANDS:
-
-        mongoControl.mongoControl();
         for (Person person : readPersonHash.values()) {
             if (mongoControl.collection.countDocuments() != readPersonHash.size()) {
                 mongoControl.addEmployeeToDataBase(person);

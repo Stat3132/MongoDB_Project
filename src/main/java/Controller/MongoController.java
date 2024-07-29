@@ -15,7 +15,7 @@ public class MongoController {
     MongoDatabase database;
     MongoCollection<Document> collection;
 
-    public void mongoControl() {
+    public MongoController() {
         mongoClient = connectToMongo();
         //Global variables for my database and collection
         database = mongoClient.getDatabase("EmployeeDatabase");
@@ -36,7 +36,7 @@ public class MongoController {
                 .build();
 
         //Creating the mongo DB connection with these settings.
-        MongoClient mongoClient = MongoClients.create(settings);
+        mongoClient = MongoClients.create(settings);
         //Solidifying the database I am trying to access
         MongoDatabase database = mongoClient.getDatabase("EmployeeDatabase");
         //Ping just to makes sure database is implemented correctly
