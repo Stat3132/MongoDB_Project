@@ -5,8 +5,22 @@ import org.neo4j.driver.GraphDatabase;
 import org.neo4j.driver.Session;
 
 public class Neo4JController {
-    public void connectToNeo4J(){
+    Driver driver;
 
+    public Neo4JController(){
+        driver = buildConnection();
+    }
+
+    private Driver buildConnection(){
+        final String dbUri = "neo4j://localhost:7687";
+        final String dbUser = "neo4j";
+        final String dbPassword = "password";
+
+        try (var driver = GraphDatabase.driver(dbUri, AuthTokens.basic(dbUser, dbPassword))) {
+            driver.verifyConnectivity();
+            System.out.println("Connection established.");
+        }
+        return driver;
     }
 
     public void addIntoNeo4J(){
@@ -21,6 +35,7 @@ public class Neo4JController {
     public void readFromNeo4J(){
 
     }
+
 
 
 }
