@@ -3,6 +3,7 @@ import Model.Person;
 import org.neo4j.driver.*;
 
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 public class Neo4JController {
     Driver driver;
@@ -17,8 +18,12 @@ public class Neo4JController {
         final String dbUri = "neo4j://localhost:7687";
         final String dbUser = "neo4j";
         final String dbPassword = "personLibrary";
+        Config config = Config.builder()
+                .withMaxTransactionRetryTime(15, TimeUnit.SECONDS)
+                .build();
 
-        try (var driver = GraphDatabase.driver(dbUri, AuthTokens.basic(dbUser, dbPassword))) {
+
+        try (var driver = GraphDatabase.driver(dbUri, AuthTokens.basic(dbUser, dbPassword), config)) {
             driver.verifyConnectivity();
             System.out.println("Connection established.");
             return driver;
