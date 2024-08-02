@@ -1,14 +1,16 @@
 package Controller;
-import org.neo4j.driver.AuthTokens;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.GraphDatabase;
-import org.neo4j.driver.Session;
+import Model.Person;
+import org.neo4j.driver.*;
+
+import java.util.Collections;
 
 public class Neo4JController {
     Driver driver;
 
+
     public Neo4JController(){
         driver = buildConnection();
+
     }
 
     private Driver buildConnection(){
@@ -23,8 +25,14 @@ public class Neo4JController {
         return driver;
     }
 
-    public void addIntoNeo4J(){
+    public void addIntoNeo4J(Person person) {
+        try (Session session = driver.session()) {
+            String personCypher = "CREATE (p:Person {ID: " + person.getID() + ", Name: " + person.getFirstName() + " " + person.getLastName() + ",HireYear: " + person.getHireYear() + "}";
+            session.writeTransaction(tx -> { tx.run(personCypher, Collections.singletonMap("ID", person.getID()));
 
+                return null;
+            });
+        }
     }
     public void deleteFromNeo4J() {
 
