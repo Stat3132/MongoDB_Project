@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.List;
 
 public class PersonController {
-    private static final String PEOPLE_DATA = Paths.get("src/main/java/long").toString();
+    private static final String PEOPLE_DATA = Paths.get("data/long").toString();
     private static List<String> peopleList;
     private static int currentId = 0;
     private static Map<Integer, Person> readPersonHash = new HashMap<>();
@@ -17,9 +17,13 @@ public class PersonController {
 
     //MONGO COMMANDS:
 
-    static MongoController mongoControl = new MongoController();
+    //static MongoController mongoControl = new MongoController();
 
     static ViewPerson menu = new ViewPerson();
+
+    //Neo4JController:
+
+    static Neo4JController neo4j = new Neo4JController();
 
     //region startUp
     public void startUp() throws IOException, ClassNotFoundException {
@@ -36,14 +40,21 @@ public class PersonController {
         }
         peopleListRead();
         //MONGO COMMANDS:
-        for (Person person : readPersonHash.values()) {
-            if (mongoControl.collection.countDocuments() != readPersonHash.size()) {
-                mongoControl.addEmployeeToDataBase(person);
+//        for (Person person : readPersonHash.values()) {
+//            if (mongoControl.collection.countDocuments() != readPersonHash.size()) {
+//                mongoControl.addEmployeeToDataBase(person);
+//            } else {
+//                break;
+//            }
+//        }
+        for (Person person: readPersonHash.values()) {
+            if (neo4j.driver.session().run("MATCH (p:Person) RETURN p").list().size() != readPersonHash.size()) {
+                neo4j.addIntoNeo4J(person);
             } else {
                 break;
             }
         }
-        menu.allPeopleMovedToMongo();
+        //menu.allPeopleMovedToMongo();
         while (true) {
             switch (menu.startUpM()){
                 case 1:
@@ -130,7 +141,7 @@ public class PersonController {
                 continue;
             }
             Person newPersonObj = new Person(currentId, firstName, lastName, hireYear);
-            mongoControl.addEmployeeToDataBase(newPersonObj);
+            //mongoControl.addEmployeeToDataBase(newPersonObj);
             menu.personAddedToMongo();
             readPersonHash.put(currentId, newPersonObj);
             System.out.println(currentId + " " + firstName + " " + lastName + " " + hireYear);
@@ -151,7 +162,7 @@ public class PersonController {
             if (userSelectedID == person.getID()) {
                 System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
                 readPersonHash.remove(person.getID());
-                mongoControl.deleteEmployeeFromDatabase(person);
+                //mongoControl.deleteEmployeeFromDatabase(person);
                 menu.personRemovedFromMongo();
                 Files.deleteIfExists(Paths.get(PEOPLE_DATA + "/" + userSelectedID + ".txt"));
                 System.out.println("File has been deleted");
@@ -210,7 +221,7 @@ public class PersonController {
                 }
 
             Person updatedPerson = new Person(person.getID(), person.getFirstName(), person.getLastName(), person.getHireYear());
-            mongoControl.updateRecord(updatedPerson);
+            //mongoControl.updateRecord(updatedPerson);
             menu.personUpdatedIntoMongo();
             String writtenPerson = person.getID() + ", " + person.getFirstName() + ", " + person.getLastName() + ", " + person.getHireYear();
             try (PrintWriter pw = new PrintWriter(new FileWriter(PEOPLE_DATA + "/" + ID + ".txt"))) {
@@ -228,14 +239,14 @@ public class PersonController {
             if (userSelectedInfo.matches("\\d+")) {
                 if (Integer.parseInt(userSelectedInfo) == person.getID()) {
                     System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
-                    mongoControl.viewEmployee(person);
+                    //mongoControl.viewEmployee(person);
                     break;
                 }
             } else {
                 if (lastName.containsKey(userSelectedInfo.toUpperCase())) {
                     for (Person p : lastName.get(userSelectedInfo.toUpperCase())) {
                         System.out.println(p.getID() + " " + p.getFirstName() + " " + p.getLastName() + " " + p.getHireYear());
-                        mongoControl.viewEmployee(person);
+                        //mongoControl.viewEmployee(person);
                     }
                     break;
                 }
@@ -248,7 +259,7 @@ public class PersonController {
     private static void viewAllPeople() throws IOException, ClassNotFoundException {
         for (Person person : readPersonHash.values()) {
             System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
-            mongoControl.viewEmployee(person);
+            //mongoControl.viewEmployee(person);
         }
     }
     //endregion

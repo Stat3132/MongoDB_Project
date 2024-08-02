@@ -16,22 +16,24 @@ public class Neo4JController {
     private Driver buildConnection(){
         final String dbUri = "neo4j://localhost:7687";
         final String dbUser = "neo4j";
-        final String dbPassword = "password";
+        final String dbPassword = "personLibrary";
 
         try (var driver = GraphDatabase.driver(dbUri, AuthTokens.basic(dbUser, dbPassword))) {
             driver.verifyConnectivity();
             System.out.println("Connection established.");
+            return driver;
+        } catch (Exception e) {
+            System.out.println("Error connecting to database: " + e);
+            return null;
         }
-        return driver;
     }
 
     public void addIntoNeo4J(Person person) {
         try (Session session = driver.session()) {
-            String personCypher = "CREATE (p:Person {ID: " + person.getID() + ", Name: " + person.getFirstName() + " " + person.getLastName() + ",HireYear: " + person.getHireYear() + "}";
-            session.writeTransaction(tx -> { tx.run(personCypher, Collections.singletonMap("ID", person.getID()));
-
-                return null;
-            });
+            String connectToDatabase = ":use People Library";
+            String createPersonQuery = "CREATE (p:Person {ID: " + person.getID() + ", Name: " + person.getFirstName() + " " + person.getLastName() + ",HireYear: " + person.getHireYear() + "}";
+            session.run(connectToDatabase);
+            session.run(createPersonQuery);
         }
     }
     public void deleteFromNeo4J() {
