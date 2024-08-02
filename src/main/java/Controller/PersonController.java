@@ -3,6 +3,10 @@ package Controller;
 import UTIL.Console;
 import Model.Person;
 import View.ViewPerson;
+import org.bson.types.BSONTimestamp;
+import org.neo4j.driver.Driver;
+import org.neo4j.driver.Session;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -24,6 +28,7 @@ public class PersonController {
     //Neo4JController:
 
     static Neo4JController neo4j = new Neo4JController();
+    Driver driver = neo4j.getDriver();
 
     //region startUp
     public void startUp() throws IOException, ClassNotFoundException {
@@ -48,10 +53,13 @@ public class PersonController {
 //            }
 //        }
         for (Person person: readPersonHash.values()) {
-            if (neo4j.driver.session().run("MATCH (p:Person) RETURN p").list().size() != readPersonHash.size()) {
-                neo4j.addIntoNeo4J(person);
-            } else {
-                break;
+            try(Session session2 = driver.session()) {
+                if (session2.run("MATCH (p:Person) RETURN p").list().size() != readPersonHash.size()) {
+                    neo4j.addIntoNeo4J(person);
+                } else {
+                    System.out.println("ALL PEOPLE MOVED TO NEO");
+                    break;
+                }
             }
         }
         //menu.allPeopleMovedToMongo();
@@ -142,6 +150,7 @@ public class PersonController {
             }
             Person newPersonObj = new Person(currentId, firstName, lastName, hireYear);
             //mongoControl.addEmployeeToDataBase(newPersonObj);
+            neo4j.addIntoNeo4J(newPersonObj);
             menu.personAddedToMongo();
             readPersonHash.put(currentId, newPersonObj);
             System.out.println(currentId + " " + firstName + " " + lastName + " " + hireYear);
@@ -162,6 +171,7 @@ public class PersonController {
             if (userSelectedID == person.getID()) {
                 System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
                 readPersonHash.remove(person.getID());
+                neo4j.deleteFromNeo4J(person);
                 //mongoControl.deleteEmployeeFromDatabase(person);
                 menu.personRemovedFromMongo();
                 Files.deleteIfExists(Paths.get(PEOPLE_DATA + "/" + userSelectedID + ".txt"));

@@ -24,33 +24,41 @@ public class Neo4JController {
                 .withMaxTransactionRetryTime(15, TimeUnit.SECONDS)
                 .build();
 
-
-        try (var driver = GraphDatabase.driver(dbUri, AuthTokens.basic(dbUser, dbPassword), config)) {
+         Driver driver = GraphDatabase.driver(dbUri, AuthTokens.basic(dbUser, dbPassword), config);
+        try  {
             driver.verifyConnectivity();
             System.out.println("Connection established.");
-            return driver;
         } catch (Exception e) {
             System.out.println("Error connecting to database: " + e);
             return null;
         }
+        return driver;
     }
 
     public void addIntoNeo4J(Person person) {
-        try (Session session = driver.session()) {
-            String connectToDatabase = ":use People Library";
-            String createPersonQuery = "CREATE (p:Person {ID: " + person.getID() + ", Name: " + person.getFirstName() + " " + person.getLastName() + ",HireYear: " + person.getHireYear() + "}";
-            session.run(connectToDatabase);
-            session.run(createPersonQuery);
+        try (Session session = driver.session(SessionConfig.builder().withDatabase("neo4j").build())) {
+            String createPersonQuery = "CREATE (p:Person {ID: $id, firstName: $firstName, lastName: $lastName, hireYear: $hireYear})";
+            session.run(createPersonQuery, Values.parameters("id", person.getID(),
+                    "firstName", person.getFirstName(),
+                    "lastName", person.getLastName(),
+                    "hireYear", person.getHireYear()));
         }
     }
-    public void deleteFromNeo4J() {
-
+    public void deleteFromNeo4J(Person person) {
+      try(Session session = driver.session(SessionConfig.builder().withDatabase("neo4j").build())){
+          String deletingPerson = "Match (p:Person) where p.ID = $id DELETE p";
+          session.run(deletingPerson, Values.parameters("id", person.getID()));
+      }
     }
     public void updateFromNeo4J(){
 
     }
     public void readFromNeo4J(){
 
+    }
+
+    public Driver getDriver() {
+        return driver;
     }
 
 
