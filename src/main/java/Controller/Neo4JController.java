@@ -19,6 +19,8 @@ public class Neo4JController {
         final String dbUser = "neo4j";
         final String dbPassword = "personLibrary";
         Config config = Config.builder()
+                .withMaxConnectionPoolSize(50)
+                .withConnectionAcquisitionTimeout(60, TimeUnit.SECONDS)
                 .withMaxTransactionRetryTime(15, TimeUnit.SECONDS)
                 .build();
 
