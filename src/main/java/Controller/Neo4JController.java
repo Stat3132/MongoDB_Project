@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 public class Neo4JController {
-    Driver driver;
+    final Driver driver;
 
 
     public Neo4JController(){
