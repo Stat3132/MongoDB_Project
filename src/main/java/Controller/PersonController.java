@@ -62,6 +62,7 @@ public class PersonController {
                 }
             }
         }
+        neo4j.setUpRelationships();
         //menu.allPeopleMovedToMongo();
         while (true) {
             switch (menu.startUpM()){

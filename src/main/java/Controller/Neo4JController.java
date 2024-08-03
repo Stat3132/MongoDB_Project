@@ -2,6 +2,7 @@ package Controller;
 import Model.Person;
 import org.neo4j.driver.*;
 
+import java.io.*;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
@@ -44,6 +45,44 @@ public class Neo4JController {
                     "hireYear", person.getHireYear()));
         }
     }
+
+    public void setUpRelationships(){
+        //builds session to allow querying onto the database
+        try (Session session = driver.session(SessionConfig.builder().withDatabase("neo4j").build())) {
+            String filepath = "data/friendships.csv"; //friendship info
+            BufferedReader reader = new BufferedReader(new FileReader(filepath)); //reader to read info
+            reader.readLine(); //reads the header so they are not used
+
+            //while loop that reads file, parses to int, then creates the query to create the relationship
+            while (reader.ready()){
+                String line = reader.readLine();
+                int pid;
+                int friendshipID;
+
+                //need to parse ID to int because it won't query as a string
+                try {
+                    pid = Integer.parseInt(line.split(",")[0]);
+                    friendshipID = Integer.parseInt(line.split(",")[1]);
+                }catch(NumberFormatException e){
+                    System.out.println("Invalid ID format");
+                    continue;
+                }
+
+                //build the query
+                StringBuilder relationshipQuery = new StringBuilder();
+                relationshipQuery.append("Match(a:Person {ID:$id1}) ");
+                relationshipQuery.append("Match(b:Person {ID:$id2}) ");
+                relationshipQuery.append("Merge(a)-[:FRIENDS_WITH]->(b)");
+
+                //run the query, adding in the ids to there preselected spot
+                session.run(relationshipQuery.toString(),
+                        Values.parameters("id1", pid, "id2", friendshipID));
+            }
+        } catch (IOException ignore){
+
+        }
+    }
+
     public void deleteFromNeo4J(Person person) {
       try(Session session = driver.session(SessionConfig.builder().withDatabase("neo4j").build())){
           String deletingPerson = "Match (p:Person) where p.ID = $id DELETE p";
