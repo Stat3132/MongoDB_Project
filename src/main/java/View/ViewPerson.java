@@ -49,16 +49,16 @@ public class ViewPerson {
     //MONGO VIEW
 
     public void allPeopleMovedToMongo(){
-        Console.write("All people imported to mongo \n", Console.TextColor.GREEN);
+        Console.write("All people imported to Neo \n", Console.TextColor.GREEN);
     }
-    public void personAddedToMongo(){
-        Console.write("Person added to mongo \n", Console.TextColor.GREEN);
+    public void personAddedToNeo(){
+        Console.write("Person added to Neo \n", Console.TextColor.GREEN);
     }
-    public void personRemovedFromMongo(){
-        Console.write("Person removed from mongo \n", Console.TextColor.GREEN);;
+    public void personRemovedFromNeo(){
+        Console.write("Person removed from Neo \n", Console.TextColor.GREEN);;
     }
-    public void personUpdatedIntoMongo(){
-        Console.write("Person updated in mongo \n", Console.TextColor.GREEN);;
+    public void personUpdatedIntoNeo(){
+        Console.write("Person updated in Neo \n", Console.TextColor.GREEN);;
     }
 
 

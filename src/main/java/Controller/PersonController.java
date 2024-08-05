@@ -3,17 +3,13 @@ package Controller;
 import UTIL.Console;
 import Model.Person;
 import View.ViewPerson;
-import org.bson.types.BSONTimestamp;
 import org.neo4j.driver.Driver;
 import org.neo4j.driver.Session;
 
 import java.io.*;
 import java.nio.file.*;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class PersonController {
     private static final String PEOPLE_DATA = Paths.get("data/long").toString();
@@ -152,7 +148,7 @@ public class PersonController {
             Person newPersonObj = new Person(currentId, firstName, lastName, hireYear);
             //mongoControl.addEmployeeToDataBase(newPersonObj);
             neo4j.addIntoNeo4J(newPersonObj);
-            menu.personAddedToMongo();
+            menu.personAddedToNeo();
             readPersonHash.put(currentId, newPersonObj);
             System.out.println(currentId + " " + firstName + " " + lastName + " " + hireYear);
             String writtenPerson = currentId + ", " + firstName + ", " + lastName + ", " + hireYear;
@@ -179,7 +175,7 @@ public class PersonController {
                 readPersonHash.remove(person.getID());
                 neo4j.deleteFromNeo4J(person);
                 //mongoControl.deleteEmployeeFromDatabase(person);
-                menu.personRemovedFromMongo();
+                menu.personRemovedFromNeo();
                 Files.deleteIfExists(Paths.get(PEOPLE_DATA + "/" + userSelectedID + ".txt"));
                 System.out.println("File has been deleted");
                 break;
@@ -247,7 +243,7 @@ public class PersonController {
 
             Person updatedPerson = new Person(person.getID(), person.getFirstName(), person.getLastName(), person.getHireYear());
             neo4j.updateFromNeo4J(updatedPerson);
-            menu.personUpdatedIntoMongo();
+            menu.personUpdatedIntoNeo();
             String writtenPerson = person.getID() + ", " + person.getFirstName() + ", " + person.getLastName() + ", " + person.getHireYear();
             try (PrintWriter pw = new PrintWriter(new FileWriter(PEOPLE_DATA + "/" + ID + ".txt"))) {
                 pw.println(writtenPerson);
