@@ -9,8 +9,11 @@ import org.neo4j.driver.Session;
 
 import java.io.*;
 import java.nio.file.*;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class PersonController {
     private static final String PEOPLE_DATA = Paths.get("data/long").toString();
@@ -44,14 +47,6 @@ public class PersonController {
             System.out.println("No files found");
         }
         peopleListRead();
-        //MONGO COMMANDS:
-//        for (Person person : readPersonHash.values()) {
-//            if (mongoControl.collection.countDocuments() != readPersonHash.size()) {
-//                mongoControl.addEmployeeToDataBase(person);
-//            } else {
-//                break;
-//            }
-//        }
         for (Person person: readPersonHash.values()) {
             try(Session session2 = driver.session()) {
                 if (session2.run("MATCH (p:Person) RETURN p").list().size() != readPersonHash.size()) {
@@ -62,6 +57,7 @@ public class PersonController {
                 }
             }
         }
+
         neo4j.setUpRelationships();
         //menu.allPeopleMovedToMongo();
         while (true) {
@@ -97,6 +93,7 @@ public class PersonController {
 
     //region read people
     private static void peopleListRead() throws IOException, ClassNotFoundException {
+        long startTime = System.currentTimeMillis();
         for (String people : peopleList) {
             Path filePath = Paths.get(PEOPLE_DATA + "/" + people);
             try (BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()))) {
@@ -125,11 +122,15 @@ public class PersonController {
                 e.printStackTrace();
             }
         }
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime)/ 1000;
+        System.out.println("Time to read: " + duration+ " seconds");
     }
     //endregion
 
     //region add
     private static void addPeople() throws IOException {
+        long startTime = System.currentTimeMillis();
         currentId++;
         while (true) {
             String newPerson = Console.getStringInput("Enter First Name, Last Name and Hire date separated by commas: ");
@@ -162,11 +163,16 @@ public class PersonController {
             currentId++;
             break;
         }
+        long endTime = System.currentTimeMillis();
+        long Duration = (endTime - startTime)/ 1000;
+        System.out.println("Time to add: " + Duration + " seconds");
+
     }
     //endregion
 
     //region Delete
     private static void deletePeople() throws IOException {
+        long startTime = System.currentTimeMillis();
         int userSelectedID = Console.getUserInt("Enter user ID to delete: ", true);
         for (Person person : readPersonHash.values()) {
             if (userSelectedID == person.getID()) {
@@ -180,11 +186,15 @@ public class PersonController {
                 break;
             }
         }
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime)/ 1000;
+        System.out.println("Time to delete: " + duration + " seconds");
     }
     //endregion
 
     //region update person
     private static void updatePeople() throws IOException, ClassNotFoundException {
+        long startTime = System.currentTimeMillis();
         int userSelectedID = Console.getUserInt("Enter user ID to alter employee: ", true);
         for (Person person : readPersonHash.values()) {
             if (userSelectedID == person.getID()) {
@@ -196,6 +206,9 @@ public class PersonController {
                 menu.updatePeopleWarning();
             }
         }
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime)/ 1000;
+        System.out.println("Time to update:" + duration+ " seconds");
     }
     //endregion
 
@@ -245,6 +258,7 @@ public class PersonController {
 
     //region view person
     private static void viewPerson() throws IOException, ClassNotFoundException {
+        long startTime = System.currentTimeMillis();
         String userSelectedInfo = Console.getUserStr("Enter user ID or last name to view contents: ",true);
         for (Person person : readPersonHash.values()) {
             if (userSelectedInfo.matches("\\d+")) {
@@ -263,15 +277,22 @@ public class PersonController {
                 }
             }
         }
+        long endtime = System.currentTimeMillis();
+        long duration = (endtime - startTime)/ 1000;
+        System.out.println("Time to view: " + duration+ " seconds");
     }
     //endregion
 
     //region view all people
     private static void viewAllPeople() throws IOException, ClassNotFoundException {
+        long startTime = System.currentTimeMillis();
         for (Person person : readPersonHash.values()) {
             System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
             //mongoControl.viewEmployee(person);
         }
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime)/ 1000;
+        System.out.println("Time to view all: " + duration + " seconds");
     }
     //endregion
 
