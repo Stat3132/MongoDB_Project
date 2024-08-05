@@ -214,7 +214,7 @@ public class PersonController {
     //region update logic
     private static void update(Person person, int ID) throws IOException {
         while (true) {
-            switch(menu.updateM()) {
+            switch (menu.updateM()) {
                 case 1:
                     String userNewFirstName = Console.getUserStr("Enter new first name: ", true);
                     if (!(2 <= userNewFirstName.length() && userNewFirstName.length() <= 16 && !userNewFirstName.matches("\\d+"))) {
@@ -241,7 +241,9 @@ public class PersonController {
                     } else {
                         person.setHireYear(newHireYear);
                     }
-                }
+                    break;
+
+            }
 
             Person updatedPerson = new Person(person.getID(), person.getFirstName(), person.getLastName(), person.getHireYear());
             neo4j.updateFromNeo4J(updatedPerson);
@@ -251,6 +253,7 @@ public class PersonController {
                 pw.println(writtenPerson);
 
             }
+            return;
         }
     }
     //endregion

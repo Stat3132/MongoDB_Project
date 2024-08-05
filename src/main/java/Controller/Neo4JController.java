@@ -91,22 +91,22 @@ public class Neo4JController {
     public void updateFromNeo4J(Person person){
         try (Session session = driver.session(SessionConfig.builder().withDatabase("neo4j").build())) {
             String update = "Match (p:Person) Where p.ID = $id" +
-                    "Set p.firstName = $firstName, p.lastName = $lastName, p.hireYear = $hireYear";
+                    " SET p.firstName = $firstName, p.lastName = $lastName, p.hireYear = $hireYear";
             session.run(update,Values.parameters("id", person.getID(), "firstName", person.getFirstName(),"lastName",person.getLastName(), "hireYear", person.getHireYear()));
         }
 
     }
     public void readFromNeo4J(Person person){
         try(Session session = driver.session(SessionConfig.builder().withDatabase("neo4j").build())){
-            String readPerson = "Match (p:Person) where p.ID = $id";
+            String readPerson = "Match (p:Person) where p.ID = $id RETURN p";
             var personRead = session.run(readPerson, Values.parameters("id", person.getID()));
 
             personRead.list().forEach(record -> {
                 var node = record.get("p").asNode();
-                System.out.println("ID: " + node.get("ID").asString());
+                System.out.println("ID: " + node.get("ID").asInt());
                 System.out.println("First Name: " + node.get("firstName").asString());
                 System.out.println("Last Name: " + node.get("lastName").asString());
-                System.out.println("Hire Year: " + node.get("hireYear").asInt());
+                System.out.println("Hire Year: " + node.get("hireYear").asString());
             });
         }
     }
