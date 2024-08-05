@@ -270,7 +270,7 @@ public class PersonController {
     private static void viewAllPeople() throws IOException, ClassNotFoundException {
         for (Person person : readPersonHash.values()) {
             System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
-            //mongoControl.viewEmployee(person);
+            neo4j.readFromNeo4J(person);
         }
     }
     //endregion
