@@ -47,19 +47,18 @@ public class PersonController {
             System.out.println("No files found");
         }
         peopleListRead();
-        for (Person person: readPersonHash.values()) {
-            try(Session session2 = driver.session()) {
-                if (session2.run("MATCH (p:Person) RETURN p").list().size() != readPersonHash.size()) {
-                    neo4j.addIntoNeo4J(person);
-                } else {
+            try(Session session = driver.session()) {
+                int neo4jPersonCount = session.run("MATCH (p:Person) RETURN count(p) AS count").single().get("count").asInt();
+                if (neo4jPersonCount == readPersonHash.size()) {
                     System.out.println("ALL PEOPLE MOVED TO NEO");
-                    break;
+                } else {
+                    for (Person person : readPersonHash.values()) {
+                        neo4j.addIntoNeo4J(person);
+                    }
                 }
-            }
         }
 
         neo4j.setUpRelationships();
-        //menu.allPeopleMovedToMongo();
         while (true) {
             switch (menu.startUpM()){
                 case 1:
