@@ -232,7 +232,7 @@ public class PersonController {
                 }
 
             Person updatedPerson = new Person(person.getID(), person.getFirstName(), person.getLastName(), person.getHireYear());
-            //mongoControl.updateRecord(updatedPerson);
+            neo4j.updateFromNeo4J(updatedPerson);
             menu.personUpdatedIntoMongo();
             String writtenPerson = person.getID() + ", " + person.getFirstName() + ", " + person.getLastName() + ", " + person.getHireYear();
             try (PrintWriter pw = new PrintWriter(new FileWriter(PEOPLE_DATA + "/" + ID + ".txt"))) {
@@ -250,14 +250,14 @@ public class PersonController {
             if (userSelectedInfo.matches("\\d+")) {
                 if (Integer.parseInt(userSelectedInfo) == person.getID()) {
                     System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
-                    //mongoControl.viewEmployee(person);
+                    neo4j.readFromNeo4J(person);
                     break;
                 }
             } else {
                 if (lastName.containsKey(userSelectedInfo.toUpperCase())) {
                     for (Person p : lastName.get(userSelectedInfo.toUpperCase())) {
                         System.out.println(p.getID() + " " + p.getFirstName() + " " + p.getLastName() + " " + p.getHireYear());
-                        //mongoControl.viewEmployee(person);
+                        neo4j.readFromNeo4J(person);
                     }
                     break;
                 }
