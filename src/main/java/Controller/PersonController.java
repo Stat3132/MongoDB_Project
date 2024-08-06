@@ -80,6 +80,7 @@ public class PersonController {
                 case 6:
                     //setup relationship
                     setupRelationship();
+                    break;
                 default:
                     //exit
                     menu.goodbye();
