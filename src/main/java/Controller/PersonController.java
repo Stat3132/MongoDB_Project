@@ -77,6 +77,9 @@ public class PersonController {
                     //view all
                     viewAllPeople();
                     break;
+                case 6:
+                    //setup relationship
+                    setupRelationship();
                 default:
                     //exit
                     menu.goodbye();
@@ -184,6 +187,15 @@ public class PersonController {
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime)/ 1000;
         System.out.println("Time to delete: " + duration + " seconds");
+    }
+    //endregion
+
+    //region setupRelationship
+    private void setupRelationship() {
+        int id1 = Console.getIntInput("Enter ID of person 1");
+        int id2 = Console.getIntInput("Enter ID of person 2");
+        neo4j.relationshipNeo4j(id1, id2);
+        Console.write("Relationship added!");
     }
     //endregion
 

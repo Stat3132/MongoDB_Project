@@ -82,6 +82,18 @@ public class Neo4JController {
         }
     }
 
+    public void relationshipNeo4j(int id1, int id2){
+        StringBuilder relationshipQuery = new StringBuilder();
+        relationshipQuery.append("Match(a:Person {ID:$id1}) ");
+        relationshipQuery.append("Match(b:Person {ID:$id2}) ");
+        relationshipQuery.append("Merge(a)-[:FRIENDS_WITH]->(b)");
+
+        try (Session session = driver.session(SessionConfig.builder().withDatabase("neo4j").build())) {
+            session.run(relationshipQuery.toString(),
+                    Values.parameters("id1", id1, "id2", id2));
+        }
+    }
+
     public void deleteFromNeo4J(Person person) {
       try(Session session = driver.session(SessionConfig.builder().withDatabase("neo4j").build())){
           String deletingPerson = "Match (p:Person) where p.ID = $id DELETE p";

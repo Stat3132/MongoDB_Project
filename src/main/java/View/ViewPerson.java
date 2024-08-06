@@ -13,8 +13,9 @@ public class ViewPerson {
                 3. Update a Person
                 4. View a Person
                 5. View all People
-                6. Exit
-                """, 1,6, Console.TextColor.PURPLE);
+                6. Set Up Relationship
+                7. Exit
+                """, 1,7, Console.TextColor.PURPLE);
     }
 
     public void lengthWarning(){
