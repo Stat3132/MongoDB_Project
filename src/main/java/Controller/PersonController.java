@@ -3,8 +3,6 @@ package Controller;
 import UTIL.Console;
 import Model.Person;
 import View.ViewPerson;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.Session;
 
 import java.io.*;
 import java.nio.file.*;
@@ -18,17 +16,9 @@ public class PersonController {
     private static Map<Integer, Person> readPersonHash = new HashMap<>();
     private static Map<String, List<Person>> lastName = new HashMap<>();
 
-    //MONGO COMMANDS:
-
-    //static MongoController mongoControl = new MongoController();
-
     static ViewPerson menu = new ViewPerson();
-
-    //Neo4JController:
-
-    static Neo4JController neo4j = new Neo4JController();
-    Driver driver = neo4j.getDriver();
-
+    //RedisController:
+    static RedisController redisController = new RedisController();
     //region startUp
     public void startUp() throws IOException, ClassNotFoundException {
         try {
@@ -43,18 +33,14 @@ public class PersonController {
             System.out.println("No files found");
         }
         peopleListRead();
-            try(Session session = driver.session()) {
-                int neo4jPersonCount = session.run("MATCH (p:Person) RETURN count(p) AS count").single().get("count").asInt();
-                if (neo4jPersonCount == readPersonHash.size()) {
-                    System.out.println("ALL PEOPLE MOVED TO NEO");
-                } else {
-                    for (Person person : readPersonHash.values()) {
-                        neo4j.addIntoNeo4J(person);
-                    }
-                }
+        redisController.redisConnection();
+        long startTime = System.currentTimeMillis();
+        for (Person person : readPersonHash.values()) {
+            redisController.addPeopleInRedis(person);
         }
-
-        neo4j.setUpRelationships();
+        long endTime = System.currentTimeMillis();
+        long duration = (endTime - startTime)/ 1000;
+        System.out.println("Time to add all people to redis: " + duration+ " seconds");
         while (true) {
             switch (menu.startUpM()){
                 case 1:
@@ -78,11 +64,6 @@ public class PersonController {
                     viewAllPeople();
                     break;
                 case 6:
-                    //setup relationship
-                    setupRelationship();
-                    break;
-                default:
-                    //exit
                     menu.goodbye();
                     return;
             }
@@ -150,9 +131,8 @@ public class PersonController {
                 continue;
             }
             Person newPersonObj = new Person(currentId, firstName, lastName, hireYear);
-            //mongoControl.addEmployeeToDataBase(newPersonObj);
-            neo4j.addIntoNeo4J(newPersonObj);
-            menu.personAddedToNeo();
+            redisController.addPeopleInRedis(newPersonObj);
+            menu.personAddedToRedis();
             readPersonHash.put(currentId, newPersonObj);
             System.out.println(currentId + " " + firstName + " " + lastName + " " + hireYear);
             String writtenPerson = currentId + ", " + firstName + ", " + lastName + ", " + hireYear;
@@ -176,11 +156,11 @@ public class PersonController {
         for (Person person : readPersonHash.values()) {
             if (userSelectedID == person.getID()) {
                 System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
+                redisController.deletePeopleInRedis(person);
                 readPersonHash.remove(person.getID());
-                neo4j.deleteFromNeo4J(person);
-                //mongoControl.deleteEmployeeFromDatabase(person);
-                menu.personRemovedFromNeo();
+                menu.personRemovedFromRedis();
                 Files.deleteIfExists(Paths.get(PEOPLE_DATA + "/" + userSelectedID + ".txt"));
+                currentId -= 2;
                 System.out.println("File has been deleted");
                 break;
             }
@@ -188,15 +168,6 @@ public class PersonController {
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime)/ 1000;
         System.out.println("Time to delete: " + duration + " seconds");
-    }
-    //endregion
-
-    //region setupRelationship
-    private void setupRelationship() {
-        int id1 = Console.getIntInput("Enter ID of person 1");
-        int id2 = Console.getIntInput("Enter ID of person 2");
-        neo4j.relationshipNeo4j(id1, id2);
-        Console.write("Relationship added!");
     }
     //endregion
 
@@ -255,8 +226,8 @@ public class PersonController {
             }
 
             Person updatedPerson = new Person(person.getID(), person.getFirstName(), person.getLastName(), person.getHireYear());
-            neo4j.updateFromNeo4J(updatedPerson);
-            menu.personUpdatedIntoNeo();
+           redisController.updatePeopleInRedis(updatedPerson);
+            menu.personUpdatedFromRedis();
             String writtenPerson = person.getID() + ", " + person.getFirstName() + ", " + person.getLastName() + ", " + person.getHireYear();
             try (PrintWriter pw = new PrintWriter(new FileWriter(PEOPLE_DATA + "/" + ID + ".txt"))) {
                 pw.println(writtenPerson);
@@ -275,14 +246,14 @@ public class PersonController {
             if (userSelectedInfo.matches("\\d+")) {
                 if (Integer.parseInt(userSelectedInfo) == person.getID()) {
                     System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
-                    neo4j.readFromNeo4J(person);
+                    redisController.readPeopleInRedis(person);
                     break;
                 }
             } else {
                 if (lastName.containsKey(userSelectedInfo.toUpperCase())) {
                     for (Person p : lastName.get(userSelectedInfo.toUpperCase())) {
                         System.out.println(p.getID() + " " + p.getFirstName() + " " + p.getLastName() + " " + p.getHireYear());
-                        neo4j.readFromNeo4J(person);
+                        redisController.readPeopleInRedis(person);
                     }
                     break;
                 }
@@ -299,7 +270,7 @@ public class PersonController {
         long startTime = System.currentTimeMillis();
         for (Person person : readPersonHash.values()) {
             System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
-            neo4j.readFromNeo4J(person);
+            redisController.readPeopleInRedis(person);
         }
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime)/ 1000;

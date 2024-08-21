@@ -13,8 +13,7 @@ public class ViewPerson {
                 3. Update a Person
                 4. View a Person
                 5. View all People
-                6. Set Up Relationship
-                7. Exit
+                6. Exit
                 """, 1,7, Console.TextColor.PURPLE);
     }
 
@@ -49,17 +48,17 @@ public class ViewPerson {
 
     //MONGO VIEW
 
-    public void allPeopleMovedToMongo(){
-        Console.write("All people imported to Neo \n", Console.TextColor.GREEN);
+    public void allPeopleMovedToRedis(){
+        Console.write("All people imported to Redis! \n", Console.TextColor.GREEN);
     }
-    public void personAddedToNeo(){
-        Console.write("Person added to Neo \n", Console.TextColor.GREEN);
+    public void personAddedToRedis(){
+        Console.write("Person added to Redis \n", Console.TextColor.GREEN);
     }
-    public void personRemovedFromNeo(){
-        Console.write("Person removed from Neo \n", Console.TextColor.GREEN);;
+    public void personRemovedFromRedis(){
+        Console.write("Person removed from Redis \n", Console.TextColor.GREEN);;
     }
-    public void personUpdatedIntoNeo(){
-        Console.write("Person updated in Neo \n", Console.TextColor.GREEN);;
+    public void personUpdatedFromRedis(){
+        Console.write("Person updated in Redis \n", Console.TextColor.GREEN);;
     }
 
 

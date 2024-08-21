@@ -28,4 +28,13 @@ public class Person{
     public void setLastName(String lastName) { this.lastName = lastName; }
     public String getHireYear() { return hireYear; }
     public void setHireYear(String hireYear) { this.hireYear = hireYear; }
+
+    @Override
+    public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("\t").append(firstName).append(" ").append(lastName).append(":\n");
+    sb.append("ID:").append(ID).append("\n");
+    sb.append("Hire year:").append(hireYear).append("\n");
+    return sb.toString();
+    }
 }

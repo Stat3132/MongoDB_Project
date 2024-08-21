@@ -45,6 +45,7 @@ public class Neo4JController {
                     "hireYear", person.getHireYear()));
         }
     }
+
     public void setUpRelationships(){
         //builds session to allow querying onto the database
         try (Session session = driver.session(SessionConfig.builder().withDatabase("neo4j").build())) {
