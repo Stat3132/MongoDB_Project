@@ -42,7 +42,7 @@ public class PersonController {
         }
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime)/ 1000;
-        System.out.println("Time to add all people to redis: " + duration+ " seconds");
+        System.out.println("Time to add all people to Amazon Dynamo: " + duration+ " seconds");
         while (true) {
             switch (menu.startUpM()){
                 case 1:
@@ -107,7 +107,7 @@ public class PersonController {
         }
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime)/ 1000;
-        System.out.println("Time to read: " + duration+ " seconds");
+        System.out.println("Time to read into Amazon Dynamo: " + duration+ " seconds");
     }
     //endregion
 
@@ -134,8 +134,8 @@ public class PersonController {
                 continue;
             }
             Person newPersonObj = new Person(currentId, firstName, lastName, hireYear);
-            redisController.addPeopleInRedis(newPersonObj);
-            menu.personAddedToRedis();
+            awsDynamoDBController.addIntoAWS(newPersonObj);
+            menu.personAddedtoAmazonDynamo();
             readPersonHash.put(currentId, newPersonObj);
             System.out.println(currentId + " " + firstName + " " + lastName + " " + hireYear);
             String writtenPerson = currentId + ", " + firstName + ", " + lastName + ", " + hireYear;
@@ -147,7 +147,7 @@ public class PersonController {
         }
         long endTime = System.currentTimeMillis();
         long Duration = (endTime - startTime)/ 1000;
-        System.out.println("Time to add: " + Duration + " seconds");
+        System.out.println("Time to add Person Into Amazon Dynamo: " + Duration + " seconds");
 
     }
     //endregion
@@ -161,7 +161,7 @@ public class PersonController {
                 System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
                 awsDynamoDBController.deleteFromAWS(person);
                 readPersonHash.remove(person.getID());
-                menu.personRemovedFromRedis();
+                menu.personDeletedFromAmazonDynamo();
                 Files.deleteIfExists(Paths.get(PEOPLE_DATA + "/" + userSelectedID + ".txt"));
                 currentId -= 2;
                 System.out.println("File has been deleted");
@@ -170,7 +170,7 @@ public class PersonController {
         }
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime)/ 1000;
-        System.out.println("Time to delete: " + duration + " seconds");
+        System.out.println("Time to delete from Amazon Dynamo: " + duration + " seconds");
     }
     //endregion
 
@@ -190,7 +190,7 @@ public class PersonController {
         }
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime)/ 1000;
-        System.out.println("Time to update:" + duration+ " seconds");
+        System.out.println("Time to update into Amazon Dynamo:" + duration+ " seconds");
     }
     //endregion
 
@@ -225,12 +225,10 @@ public class PersonController {
                         person.setHireYear(newHireYear);
                     }
                     break;
-
             }
-
             Person updatedPerson = new Person(person.getID(), person.getFirstName(), person.getLastName(), person.getHireYear());
-           redisController.updatePeopleInRedis(updatedPerson);
-            menu.personUpdatedFromRedis();
+            awsDynamoDBController.updateAWS(updatedPerson);
+            menu.personUpdatedIntoAmazonDynamo();
             String writtenPerson = person.getID() + ", " + person.getFirstName() + ", " + person.getLastName() + ", " + person.getHireYear();
             try (PrintWriter pw = new PrintWriter(new FileWriter(PEOPLE_DATA + "/" + ID + ".txt"))) {
                 pw.println(writtenPerson);
@@ -249,7 +247,7 @@ public class PersonController {
             if (userSelectedInfo.matches("\\d+")) {
                 if (Integer.parseInt(userSelectedInfo) == person.getID()) {
                     System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
-                    redisController.readPeopleInRedis(person);
+                    awsDynamoDBController.readFromAWS(person);
                     break;
                 }
             } else {
@@ -264,7 +262,7 @@ public class PersonController {
         }
         long endtime = System.currentTimeMillis();
         long duration = (endtime - startTime)/ 1000;
-        System.out.println("Time to view: " + duration+ " seconds");
+        System.out.println("Time to view on Amazon Dynamo: " + duration+ " seconds");
     }
     //endregion
 
@@ -277,7 +275,7 @@ public class PersonController {
         }
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime)/ 1000;
-        System.out.println("Time to view all: " + duration + " seconds");
+        System.out.println("Time to view all Amazon Dynamo members: " + duration + " seconds");
     }
     //endregion
 

@@ -15,7 +15,10 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
+
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AWSDynamoDBController {
 
@@ -30,11 +33,55 @@ public class AWSDynamoDBController {
                 .build();
         DBClient = ddb;
     }
-    public void addIntoAWS(){
+
+
+    public void addIntoAWS(Person person){
+        Map<String, AttributeValue> itemValues = new HashMap<>();
+        itemValues.put("ID", AttributeValue.builder().s(String.valueOf(person.getID())).build());
+        itemValues.put("FirstName", AttributeValue.builder().s(person.getFirstName()).build());
+        itemValues.put("LastName", AttributeValue.builder().s(person.getLastName()).build());
+        itemValues.put("HireYear", AttributeValue.builder().s(person.getHireYear()).build());
+
+        // Create the PutItemRequest
+        PutItemRequest request = PutItemRequest.builder()
+                .tableName(tableName)
+                .item(itemValues)
+                .build();
+
+        try {
+            // Execute the put request
+            DBClient.putItem(request);
+            //System.out.println("Successfully added person to the table!");
+
+        } catch (DynamoDbException e) {
+            e.printStackTrace();
+        }
 
     }
-    public void deleteFromAWS(){
+    public void deleteFromAWS(Person person){
+        String partitionKey = "ID";
+        String sortKey = "FirstName";
+        String keyValue = String.valueOf(person.getID());
 
+        // Create the primary key map
+        Map<String, AttributeValue> keyToDelete = new HashMap<>();
+        keyToDelete.put(partitionKey, AttributeValue.builder().s(String.valueOf(person.getID())).build());
+        keyToDelete.put(sortKey, AttributeValue.builder().s(person.getFirstName()).build());
+
+        // Create the DeleteItemRequest
+        DeleteItemRequest deleteReq = DeleteItemRequest.builder()
+                .tableName(tableName)
+                .key(keyToDelete)
+                .build();
+
+        try {
+            // Execute the delete request
+            DBClient.deleteItem(deleteReq);
+            System.out.println("Successfully deleted item with ID: " + keyValue);
+
+        } catch (DynamoDbException e) {
+            e.printStackTrace();
+        }
     }
     public void readFromAWS(Person person){
         String partitionKey = "ID";
@@ -68,8 +115,9 @@ public class AWSDynamoDBController {
             e.printStackTrace();
         }
     }
-    public void updateAWS(){
-
+    public void updateAWS(Person person){
+        deleteFromAWS(person);
+        addIntoAWS(person);
     }
 
     public void listAllAWS(){

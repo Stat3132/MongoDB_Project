@@ -51,14 +51,14 @@ public class ViewPerson {
     public void allPeopleMovedToRedis(){
         Console.write("All people imported to Redis! \n", Console.TextColor.GREEN);
     }
-    public void personAddedToRedis(){
-        Console.write("Person added to Redis \n", Console.TextColor.GREEN);
+    public void personAddedtoAmazonDynamo(){
+        Console.write("Person added to Amazon Dynamo \n", Console.TextColor.GREEN);
     }
-    public void personRemovedFromRedis(){
-        Console.write("Person removed from Redis \n", Console.TextColor.GREEN);;
+    public void personDeletedFromAmazonDynamo(){
+        Console.write("Person removed from Amazon Dynamo \n", Console.TextColor.GREEN);;
     }
-    public void personUpdatedFromRedis(){
-        Console.write("Person updated in Redis \n", Console.TextColor.GREEN);;
+    public void personUpdatedIntoAmazonDynamo(){
+        Console.write("Person updated in Amazon Dynamo \n", Console.TextColor.GREEN);;
     }
 
 
