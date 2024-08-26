@@ -10,15 +10,15 @@ import java.util.*;
 import java.util.List;
 
 public class PersonController {
-    private static final String PEOPLE_DATA = Paths.get("data/long").toString();
+    private static final String PEOPLE_DATA = Paths.get("data/short").toString();
     private static List<String> peopleList;
     private static int currentId = 0;
     private static Map<Integer, Person> readPersonHash = new HashMap<>();
     private static Map<String, List<Person>> lastName = new HashMap<>();
 
     static ViewPerson menu = new ViewPerson();
-    //RedisController:
-    static RedisController redisController = new RedisController();
+    static AWSDynamoDBController awsDynamoDBController = new AWSDynamoDBController();
+
     //region startUp
     public void startUp() throws IOException, ClassNotFoundException {
         try {
@@ -32,11 +32,13 @@ public class PersonController {
         } catch (IOException e){
             System.out.println("No files found");
         }
+        awsDynamoDBController.buildConnection();
         peopleListRead();
-        redisController.redisConnection();
         long startTime = System.currentTimeMillis();
-        for (Person person : readPersonHash.values()) {
-            redisController.addPeopleInRedis(person);
+        if(!((long) peopleList.size() == awsDynamoDBController.getCountAWS())){
+            for (Person person : readPersonHash.values()) {
+                awsDynamoDBController.addIntoAWS(person);
+            }
         }
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime)/ 1000;
@@ -65,6 +67,7 @@ public class PersonController {
                     break;
                 case 6:
                     menu.goodbye();
+                    awsDynamoDBController.close();
                     return;
             }
         }
@@ -156,7 +159,7 @@ public class PersonController {
         for (Person person : readPersonHash.values()) {
             if (userSelectedID == person.getID()) {
                 System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
-                redisController.deletePeopleInRedis(person);
+                awsDynamoDBController.deleteFromAWS(person);
                 readPersonHash.remove(person.getID());
                 menu.personRemovedFromRedis();
                 Files.deleteIfExists(Paths.get(PEOPLE_DATA + "/" + userSelectedID + ".txt"));
@@ -253,7 +256,7 @@ public class PersonController {
                 if (lastName.containsKey(userSelectedInfo.toUpperCase())) {
                     for (Person p : lastName.get(userSelectedInfo.toUpperCase())) {
                         System.out.println(p.getID() + " " + p.getFirstName() + " " + p.getLastName() + " " + p.getHireYear());
-                        redisController.readPeopleInRedis(person);
+                        awsDynamoDBController.readFromAWS(person);
                     }
                     break;
                 }
@@ -270,7 +273,7 @@ public class PersonController {
         long startTime = System.currentTimeMillis();
         for (Person person : readPersonHash.values()) {
             System.out.println(person.getID() + " " + person.getFirstName() + " " + person.getLastName() + " " + person.getHireYear());
-            redisController.readPeopleInRedis(person);
+            awsDynamoDBController.listAllAWS();
         }
         long endTime = System.currentTimeMillis();
         long duration = (endTime - startTime)/ 1000;

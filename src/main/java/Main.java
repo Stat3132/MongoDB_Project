@@ -7,11 +7,12 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        //PersonController personController = new PersonController();
-        //personController.startUp();
+        PersonController personController = new PersonController();
+        personController.startUp();
         //Neo4JController neo4j = new Neo4JController();
-        AWSDynamoDBController awsDynamoDBController = new AWSDynamoDBController();
-       // MongoController mongoController = new MongoController();
-       // mongoController.closeMongo();
+        //AWSDynamoDBController awsDynamoDBController = new AWSDynamoDBController();
+        //MongoController mongoController = new MongoController();
+        //mongoController.closeMongo();
+
     }
 }
