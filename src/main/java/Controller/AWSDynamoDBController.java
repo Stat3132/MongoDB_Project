@@ -51,4 +51,16 @@ public class AWSDynamoDBController {
             System.err.println(e.getMessage());
         }
     }
+    public void addIntoAWS(){
+
+    }
+    public void deleteFromAWS(){
+
+    }
+    public void readFromAWS(){
+
+    }
+    public void updateAWS(){
+
+    }
 }
